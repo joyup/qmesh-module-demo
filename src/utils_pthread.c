@@ -23,12 +23,12 @@ extern "C"{
 
 typedef struct  tagTHREAD_
 {
-	char		strName[32];	////线程名字
-	int			bDestory;		////1代表已经在销毁中
-	int			bTrigger;		////
-	int			bRuning;		////
-	void *		pUserCtx;		////指向用户上下文	
-	int			bUsedCtx;		////是否使用
+	char		strName[32];
+	int			bDestory;
+	int			bTrigger;
+	int			bRuning;
+	void *		pUserCtx;
+	int			bUsedCtx;
 	pthread_t 	thr;
     pthread_mutex_t lock;
 } stTHREAD,*pstTHREAD;
@@ -48,13 +48,13 @@ void * Utils_Pthread_Create(int nThrPriority, int nThrStackSize,Utils_Pthread_Fu
     pthread_mutex_init(&pThread->lock, NULL);
 
 	nThreadStackSize = (1024 > nThrStackSize) ? API_THREAD_STACK_SIZE : nThrStackSize;
-    pthread_mutex_trylock(&pThread->lock); /////锁定创建线程
+    pthread_mutex_trylock(&pThread->lock);
 
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setstacksize(&attr, nThreadStackSize);
 	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-	pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);	/////线程分离
+	pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
 
 	pThread->bDestory = false;
 	pThread->bRuning = true;
@@ -64,11 +64,11 @@ void * Utils_Pthread_Create(int nThrPriority, int nThrStackSize,Utils_Pthread_Fu
 	if(0 != pthread_create(&pThread->thr, &attr, pFunc, (void *)pThread))
 	{
 		pthread_attr_destroy(&attr);
-		pthread_mutex_unlock(&pThread->lock);/////解锁创建线程
+		pthread_mutex_unlock(&pThread->lock);
 		goto ERROR;
 	}
 	pthread_attr_destroy(&attr);
-    pthread_mutex_unlock(&pThread->lock); /////解锁创建线程
+    pthread_mutex_unlock(&pThread->lock);
 
 	while(nTimes--)
 	{
@@ -99,14 +99,14 @@ int Utils_Pthread_Destory(void * hThread)
 	{
 		return false;
 	}
-	if(true == pThread->bDestory)	////防止二次调用销毁
+	if(true == pThread->bDestory)
 	{
 		return false;
 	}
-	////等待线程状态退出线程
+
 	pthread_mutex_lock(&pThread->lock);
 	pThread->bTrigger = false;
-	pThread->bDestory = true;		////正在销毁
+	pThread->bDestory = true;
 	pthread_mutex_unlock(&pThread->lock);
 	while(nTimes--)
 	{
@@ -116,7 +116,7 @@ int Utils_Pthread_Destory(void * hThread)
 		}
 		pthread_mutex_lock(&pThread->lock);
 		pThread->bTrigger = false;
-		pThread->bDestory = true; ////正在销毁
+		pThread->bDestory = true;
 		pthread_mutex_unlock(&pThread->lock);
 		usleep(20*1000);
 	}
@@ -186,7 +186,7 @@ int Utils_Pthread_Lock(void * hThread)
 	{
 		return false;
 	}
-	pthread_mutex_lock(&pThread->lock);/////加锁
+	pthread_mutex_lock(&pThread->lock);
 	return true;
 }
 int Utils_Pthread_UnLock(void * hThread)
@@ -196,7 +196,7 @@ int Utils_Pthread_UnLock(void * hThread)
 	{
 		return false;
 	}
-    pthread_mutex_unlock(&pThread->lock); /////解锁
+    pthread_mutex_unlock(&pThread->lock);
 	return true;
 }
 

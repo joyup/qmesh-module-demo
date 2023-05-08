@@ -131,65 +131,6 @@ int QiM_Protocol_Build_CCO_Tx_Data(unsigned int  u32Seq, unsigned int u32Cmd, U8
 	return s32DataLen;
 }
 
-/**
-* @brief 构造STA通信Frame
-*
-* @param u32Seq 	序列号
-* @param u32Func 	功能号字节
-* @param u8InData 	待发送的数据段
-* @param u32InDataLen	发送数据长度
-* @param u8OutData  创建后的数据buf，返回构造好的Frame
-* @param u32OutDataMaxLen 数据buf最大长度
-* @param responseFlag  是否返回数据响应flag，1 返回 2 不返回但上报属性 3 并返回
-* @return -1:失败 >0:数据长度
-* @comment: 1、未检测输出buf的溢出情况。2、未检测输入buf的非法指针情况
-*/
-int QiM_Protocol_Build_STA_Tx_Data(
-	unsigned int  u32Seq, 
-	unsigned int u32Func, 
-	QIM_MODEL_ADDR_INFO_ST* pstDevAddr, 
-	U8 *u8InData, 
-	U32 u32InDataLen, 
-	U8* u8OutData, 
-	U32 u32OutDataMaxLen, 
-	U8 responseFlag)
-{
-	unsigned short u16Crc = 0;
-	int s32DataLen = sizeof(QIM_PLC_TX_FRAME_HEAD);
-
-	QIM_PLC_TX_FRAME_HEAD *pTxFrameHead = (QIM_PLC_TX_FRAME_HEAD *)u8OutData;
-	pTxFrameHead->u8Head = QIM_FRAME_HEAD;
-	pTxFrameHead->u8Ctrl = QIM_FRAME_CTRL_BOARD_MASTER;	
-	pTxFrameHead->u16Cmd = CCO_CMD_BUS_COMMAND;
-	pTxFrameHead->u16Seq = u32Seq;
-	pTxFrameHead->u16Len = sizeof(QIM_PLC_STA_TX_FRAME_HEAD) + u32InDataLen;
-	
-	QIM_PLC_STA_TX_FRAME_HEAD *pStaFrameHead = (QIM_PLC_STA_TX_FRAME_HEAD *)(u8OutData+s32DataLen);
-	QiM_Protocol_MacCharToInt(6, pstDevAddr->u8Addr, pStaFrameHead->u8StaMac);
-	pStaFrameHead->u16StaDataLen  = u32InDataLen + 8;	//userdata len + userdata head
-	pStaFrameHead->u8DataMajorVer = PLC_MAJOR_VER;
-	pStaFrameHead->u8DataMinorVer = PLC_MINOR_VER;
-	pStaFrameHead->u16StaDataSeq = u32Seq;
-	pStaFrameHead->u8DataFuncCode = u32Func;
-	pStaFrameHead->u8DataStatusCode = responseFlag;
-
-	QiM_Protocol_MacCharToInt(2, pstDevAddr->u8NetAddr, (U8 *)&pStaFrameHead->u16DataDevAddr);
-
-	s32DataLen += sizeof(QIM_PLC_STA_TX_FRAME_HEAD);
-	if (u32InDataLen > 0)
-	{
-		memcpy(u8OutData + s32DataLen, u8InData, u32InDataLen);
-		s32DataLen += u32InDataLen;
-	}
-
-	u16Crc = Crc16_Ccitt(u8OutData, s32DataLen);
-	u8OutData[s32DataLen] = (u16Crc >> 8) & 0x00FF;
-	u8OutData[s32DataLen + 1] = (u16Crc) & 0x00FF;
-	s32DataLen += 2;
-	return s32DataLen;
-}
-
-
 #ifdef __cplusplus
 }
 #endif /* End of #ifdef __cplusplus */
