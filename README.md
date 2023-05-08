@@ -22,7 +22,7 @@
 ### 运行
   cd output
   
-  ./qmesh_test
+  ./qmesh_test [-b bandrate -n uart_dev_name] #不带参数的话，默认波特率460800，串口设备名/dev/ttyUSB0
   
   执行后，会等待用户的命令输入，输入对应的命令会执行PLC相关的操作，具体可参考qmesh_demo.c的设定
   
