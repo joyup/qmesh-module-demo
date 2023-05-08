@@ -1,0 +1,17 @@
+{
+    "files.associations": {
+        "qmesh_sdk.h": "c",
+        "plc_module_sdk.h": "c",
+        "fcntl.h": "c",
+        "semaphore.h": "c",
+        "unistd.h": "c",
+        "qmesh_semaphore.h": "c",
+        "plc_module_protocol.h": "c",
+        "common.h": "c",
+        "string.h": "c",
+        "stdint.h": "c",
+        "stdlib.h": "c",
+        "pthread.h": "c",
+        "utils_pthread.h": "c"
+    }
+}
