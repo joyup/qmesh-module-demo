@@ -1,7 +1,7 @@
 /*
  * @Author: Danny Yu
  * @Copyright: 2022 Shenzhen Qualmesh Technology Co., Ltd.
- * @Date: 2022-06-28 09:46:40
+ * @Date: 2024-06-28 09:46:40
  * @Description: qmesh sdk demo
  */
 #include <stdlib.h>
